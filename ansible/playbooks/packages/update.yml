@@ -1,0 +1,24 @@
+- name: Update all packages
+  hosts: pi
+  tasks:
+    - name: Update
+      become: true
+      ansible.builtin.apt:
+        upgrade: true
+        update_cache: true
+        cache_valid_time: 86400 # 24 hours
+
+    # reboot works for Ubuntu & Debian only (Raspberry Pi OS is a Debian derivative)
+    - name: Check if a Reboot is Needed
+      register: reboot_required_file
+      stat: path=/var/run/reboot-required get_md5=no
+
+    - name: Reboot if Required
+      reboot:
+        msg: "Reboot initiated by Ansible due to kernel updates"
+        connect_timeout: 5
+        reboot_timeout: 300
+        pre_reboot_delay: 0
+        post_reboot_delay: 30
+        test_command: uptime
+      when: reboot_required_file.stat.exists

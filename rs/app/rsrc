@@ -1,0 +1,34 @@
+#!/usr/bin/env sh
+
+# rc file for configuring rs, changing these values will change the default behaviour of rs
+# you probably instead want to use the config file in your home directory ~/.config/rs/rsrc
+# or in your project directory <project_dir>/.rsrc
+
+# project directory rc file name
+# RS_RC=".rsrc"
+
+# base directory for scripts
+# RS_SCRIPTS_BASE_DIR="./scripts"
+
+# location of rs library functions
+# RS_LIB="/usr/lib/rs/lib.sh"
+
+# RS_LOG_LEVEL=WARN
+
+# whether or not to display colors
+# RS_COLOR="false"
+
+# error message style
+# RS_STYLE_ERROR="\\033[0;91m"
+# warning message style
+# RS_STYLE_WARNING="\\033[0;93m"
+# info message style
+# RS_STYLE_INFO="\\033[0;94m"
+# success message style
+# RS_STYLE_SUCCESS="\\033[0;92m"
+# debug message style
+# RS_STYLE_DEBUG="\\033[0;96m"
+# bold style
+# RS_STYLE_BOLD="\\033[1m"
+# reset style
+# RS_STYLE_NORMAL="\\033[0m"

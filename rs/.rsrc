@@ -1,0 +1,3 @@
+RS_LIB=./app/lib.sh
+RS_COLOR=true
+RS_LOG_LEVEL=WARN

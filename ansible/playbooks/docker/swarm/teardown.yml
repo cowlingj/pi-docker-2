@@ -1,0 +1,14 @@
+- name: Remove Swarm Worker Nodes
+  hosts: worker
+  tasks:
+    - name: Leave Swarm
+      docker_swarm:
+        state: absent
+
+- name: Remove Swarm Manager Nodes
+  hosts: manager
+  tasks:
+    - name: Leave Swarm
+      docker_swarm:
+        state: absent
+        force: true

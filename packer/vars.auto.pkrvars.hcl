@@ -1,0 +1,7 @@
+ssh_key_location = "~/.ssh/raspberrypi-1_rsa.pub"
+user_name = "pi1"
+dns_server_primary = "192.168.1.254"
+dns_server_secondary = "1.2.3.4"
+hostname = "raspberrypi-1"
+ip_address = "192.168.1.32"
+netmask = "255.255.255.0"

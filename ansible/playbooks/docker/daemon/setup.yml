@@ -1,0 +1,17 @@
+- name: Setup docker rootless mode
+  hosts: pi
+  tasks:
+    - name: Make sure Docker is Stopped and Disabled
+      become: true
+      with_nested: 
+        - [ stopped, disabled ]
+        - [ docker.service, docker.socket ]
+      ansible.builtin.systemd:
+        state: "{{ items[0] }}"
+        name: "{{ items[1] }}"
+        scope: system
+    - name: setup
+      ansible.builtin.shell:
+        executable: /bin/bash
+        cmd: |-
+          dockerd-rootless-setuptool.sh help

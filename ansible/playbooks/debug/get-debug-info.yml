@@ -1,0 +1,32 @@
+- name: Get debug info
+  hosts: pi
+  tasks:
+    - name: Get Pi Details
+      ansible.builtin.shell:
+        executable: /bin/bash
+        cmd: |-
+          for f in \
+            /proc/{device-tree/model,version,cpuinfo,meminfo} \
+            /sys/class/net/*/address
+          do
+            echo "=========="
+            echo "$f"
+            echo -e "==========\n"
+            cat "$f"
+            echo ""
+          done
+
+          echo "=========="
+          echo "IP Address"
+          echo -e "==========\n"
+          ip addr show
+      register: details
+
+- name: Create reports
+  hosts: localhost
+  tasks:
+    - with_items: "{{ groups.pi }}"
+      name: Create report
+      ansible.builtin.copy:
+        content: "{{ hostvars[item].details.stdout }}"
+        dest: "{{ lookup('env', 'PWD') }}/output/debug-info/{{ item }}.txt"

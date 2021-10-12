@@ -1,0 +1,7 @@
+- name: Install packages
+  hosts: pi
+  tasks:
+    - name: Install packages from {{ ansible_playbook_dir }}/packages.txt
+      apt:
+        with_lines: cat {{ ansible_playbook_dir }}/packages.txt
+        name: {{ item }}

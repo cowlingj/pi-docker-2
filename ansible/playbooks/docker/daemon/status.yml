@@ -1,0 +1,16 @@
+- name: See if docker is installed and running
+  hosts: pi
+  tasks:
+    - name: Get Docker Daemon State
+      ansible.builtin.shell:
+        cmd: |-
+          systemctl --user show \
+            --property Type \
+            --property ActiveState \
+            --property UnitFileState \
+            --property CapabilityBoundingSet \
+            docker
+      register: docker_state
+
+    - name: See if docker is running
+      ansible.builtin.debug: msg="{{ docker_state.stdout.split('\n') }}"

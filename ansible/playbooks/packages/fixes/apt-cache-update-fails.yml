@@ -1,0 +1,12 @@
+# Fix for:
+#
+# Failed to update apt cache: W:This must be accepted
+# explicitly bef ore updates for this repository can be applied.
+
+- name: Fix apt cache update
+  hosts: pi
+  tasks:
+    - name: Update (Allow Releaseinfo Change)
+      become: true
+      ansible.builtin.command:
+        cmd: apt-get update -y --allow-releaseinfo-change

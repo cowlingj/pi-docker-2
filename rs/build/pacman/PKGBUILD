@@ -1,0 +1,19 @@
+source=("./app.tar.gz")
+
+depends=("bash")
+
+makedepends=("pandoc")
+pkgname=("rs")
+arch=("x86_64")
+pkgver="0.0.1"
+pkgrel="1"
+
+build() {
+  ls
+  # cd "$pkgname-$pkgver"
+  pandoc app/rs.md -s -t man > rs.man
+}
+
+package() {
+  :
+}

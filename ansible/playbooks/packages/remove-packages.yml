@@ -1,0 +1,8 @@
+- name: Remove packages
+  hosts: pi
+  tasks:
+    - name: Remove packages from {{ ansible_playbook_dir }}/packages.txt
+      apt:
+        with_lines: cat {{ ansible_playbook_dir }}/packages.txt
+        name: {{ item }}
+        state: absent

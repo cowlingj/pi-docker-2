@@ -1,0 +1,10 @@
+- name: Start Docker Daemon
+  hosts: pi
+  tasks:
+    - name: Make sure Docker is Running
+      ansible.builtin.systemd:
+        state: started
+        name: docker
+        scope: user
+      # environment:
+      #   XDG_RUNTIME_DIR: "/run/user/{{ myuid }}"

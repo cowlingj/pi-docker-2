@@ -1,0 +1,25 @@
+- name: Setup Swarm Manager Nodes
+  hosts: manager
+  tasks:
+    - name: Init
+      docker_swarm:
+        state: present
+        advertise_addr: "hostvars[inventory_hostname]['ansible_default_ipv4']['address']"
+      register: swarm_info
+
+- name: Setup Swarm Worker Nodes
+  hosts: worker
+  tasks:
+    - name: Add Workers
+      docker_swarm:
+        state: join
+        advertise_addr: hostvars['manager']['ansible_default_ipv4']['address']
+        join_token: "{{ hostvars['manager'].swarm_info.swarm_facts.JoinTokens.Worker }}"
+        remote_addrs: [ "{{ hostvars[inventory_hostname]['ansible_default_ipv4']['address'] }}" ]
+
+- name: Inspect swarm
+  hosts: manager
+  tasks:
+    - name: Inspect
+      docker_swarm:
+        state: inspect
