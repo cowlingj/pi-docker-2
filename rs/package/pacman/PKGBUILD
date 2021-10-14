@@ -1,0 +1,25 @@
+pkgname="rs"
+pkgver="__VERSION__"
+pkgrel="1"
+
+license=('MIT')
+arch=("any")
+
+depends=("bash")
+makedepends=("pandoc")
+
+source=("./app.tar.gz" "LICENSE")
+
+build() {
+  cd "$srcdir/app"
+  pandoc rs.md -s -t man | gzip > rs.1.gz
+}
+
+package() {
+  mkdir -p "$pkgdir/usr/share/man/man1" "$pkgdir/usr/bin" "$pkgdir/usr/lib/rs" "$pkgdir/etc/rs" "$pkgdir/usr/share/licenses/rs"
+  cp "$srcdir/app/rs.1.gz" "$pkgdir/usr/share/man/man1"
+  cp "$srcdir/app/rs.sh" "$pkgdir/usr/bin/rs"
+  cp "$srcdir/app/lib.sh" "$pkgdir/usr/lib/rs"
+  cp "$srcdir/app/rsrc" "$pkgdir/etc/rs/rsrc"
+  cp "$srcdir/LICENSE" "$pkgdir/usr/share/licenses/rs"
+}

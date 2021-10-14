@@ -20,7 +20,7 @@ _rs_check_script_within_project_folder() {
 }
 
 _rs_help() {
-  if [ "$#" == "1" ]; then
+  if [ "$#" -le "1" ]; then
     # look for help script
     if [ ! -f "$RS_SCRIPTS_BASE_DIR/help.sh" ]; then
       rs_warn "No \"$RS_SCRIPTS_BASE_DIR/help.sh\" script found, showing default help message" >&2

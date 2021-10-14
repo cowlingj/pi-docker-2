@@ -69,23 +69,23 @@ _rs_log_level() {
 }
 
 rs_error() {
-  [ _rs_log_level -lt 0 ] || echo -e "${RS_STYLE_ERROR}[Error]${RS_STYLE_NORMAL}: ${RS_STYLE_BOLD}$@${RS_STYLE_NORMAL}"
+  [ "$(_rs_log_level)" -lt 0 ] || echo -e "${RS_STYLE_ERROR}[Error]${RS_STYLE_NORMAL}: ${RS_STYLE_BOLD}$@${RS_STYLE_NORMAL}"
 }
 
 rs_warn() {
-  [ _rs_log_level -lt 1 ] || echo -e "${RS_STYLE_WARNING}[Warn]${RS_STYLE_NORMAL}: $@"
+  [ "$(_rs_log_level)" -lt 1 ] || echo -e "${RS_STYLE_WARNING}[Warn]${RS_STYLE_NORMAL}: $@"
 }
 
 rs_info() {
-  [ _rs_log_level -lt 2 ] || echo -e "${RS_STYLE_INFO}[Info]${RS_STYLE_NORMAL}: $@"
+  [ "$(_rs_log_level)" -lt 2 ] || echo -e "${RS_STYLE_INFO}[Info]${RS_STYLE_NORMAL}: $@"
 }
 
 rs_success() {
-  [ _rs_log_level -lt 1 ] || echo -e "${RS_STYLE_SUCCESS}[Success]${RS_STYLE_NORMAL}: $@"
+  [ "$(_rs_log_level)" -lt 1 ] || echo -e "${RS_STYLE_SUCCESS}[Success]${RS_STYLE_NORMAL}: $@"
 }
 
 rs_debug() {
-  [ _rs_log_level -lt 3 ] || echo -e "${RS_STYLE_DEBUG}[Debug]${RS_STYLE_NORMAL}: $@"
+  [ "$(_rs_log_level)" -lt 3 ] || echo -e "${RS_STYLE_DEBUG}[Debug]${RS_STYLE_NORMAL}: $@"
 }
 
 if $RS_COLOR; then
