@@ -1,6 +1,13 @@
 # make path absolute and remove . and ..
 # realpath is similar, but is not available on MacOS by default
 rs_cannonicalize() {
+
+  # shortcut if absolute path
+  if [ "${1:0:1}" = "/" ]; then
+    echo "$1"
+    return
+  fi
+
   # shortcut if path is pwd
   if [[ "$1" == "." ]] || [[ "$1" == "$(pwd)" ]]; then
     echo "$(pwd)"
@@ -60,7 +67,7 @@ _rs_log_level() {
       echo "0"
       ;;
     NONE)
-      echo "0"
+      echo "-1"
       ;;
     *)
       echo "999"

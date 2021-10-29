@@ -5,3 +5,7 @@ help() {
 run() {
   rs_debug testing run $0 [$#] $@
 }
+
+description() {
+  echo testing description
+}

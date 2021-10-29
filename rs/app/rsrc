@@ -13,6 +13,10 @@
 # location of rs library functions
 # RS_LIB="/usr/lib/rs/lib.sh"
 
+# size of tree indentation step
+# RS_INDENT_SIZE=2
+
+# hide logs less severe than level (ERROR > WARNING > INFO > DEBUG)
 # RS_LOG_LEVEL=WARN
 
 # whether or not to display colors

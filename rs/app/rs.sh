@@ -7,6 +7,7 @@
 : "${RS_SCRIPTS_BASE_DIR:=./scripts}"
 : "${RS_COLOR:=false}"
 : "${RS_LOG_LEVEL:=WARN}"
+: "${INDENT_SIZE:=2}"
 
 [ -f "/etc/rs/rsrc" ] && source "/etc/rs/rsrc"
 [ -f "${HOME}/.config/rs/rsrc" ] && source "${HOME}/.config/rs/rsrc"
@@ -17,6 +18,14 @@
 # file permissions should stop any actual malace, but let's be good citizens and disallow calling scripts that aren't in $RS_SCRIPTS_BASE_DIR
 _rs_check_script_within_project_folder() {
   [[ "$(rs_cannonicalize "$1")" != "$(rs_cannonicalize "${RS_SCRIPTS_BASE_DIR%/}")/*" ]]
+}
+
+_rs_in_array() {
+  local ITEM
+  for ITEM in "${@:2}"; do
+    [ "$ITEM" == "$1" ] && return 0
+  done
+  return 1
 }
 
 _rs_help() {
@@ -83,15 +92,15 @@ _rs_list() {
     # get description from script or fallback to default
     if [ -f "$script" ] && [ "${script##*.}" == "sh" ]; then
       DESCRIPTION="$(
-        (source $script && [ "$(type -t description)" == "function" ] && description) || echo "No description provided"
+        (source "$script" && [ "$(type -t description)" == "function" ] && description) || echo "No description provided"
       )"
-      SCRIPT_FILE="$(basename $script)"
+      SCRIPT_FILE="$(basename "$script")"
       echo "  ${SCRIPT_FILE%.sh} - $DESCRIPTION"
     fi
 
     # get default description for collections without similarly named file
     if [ -d "$script" ] && [ ! -f "${script}.sh" ] && [ -n "$(find "$script" -mindepth 1 -maxdepth 1 -not -name '.*' -name '*.sh')" ]; then
-      SCRIPT_FILE="$(basename $script)"
+      SCRIPT_FILE="$(basename "$script")"
       # avoid double space
       POSSIBLE_SPACE="" && [ $# -gt 1 ] && POSSIBLE_SPACE=" "
       echo "  $SCRIPT_FILE - a collection of scripts, use \"$0 --list ${@:2}$POSSIBLE_SPACE$SCRIPT_FILE\" to see available sub scripts"
@@ -100,41 +109,61 @@ _rs_list() {
 }
 
 _rs_tree() {
+  ROOT="$( rs_cannonicalize "$RS_SCRIPTS_BASE_DIR/$(printf "%s/" "." "${@:2}")" )"
 
-  for dir_or_script in "$1"/*; do
+  false
 
-    if [ ! -e "$dir_or_script" ]; then
+  if ! _rs_check_script_within_project_folder "$ROOT"; then
+    rs_error "$ROOT is not within $RS_SCRIPTS_BASE_DIR directory" >&2
+    return 1
+  fi
+
+  declare -a PREVIOUS_SCRIPT_COMPONENTS ALREADY_PRINTED
+  while read -r SCRIPT; do
+    BASE="$(rs_cannonicalize "$RS_SCRIPTS_BASE_DIR" )"
+    IFS='/' read -ra SCRIPT_COMPONENTS <<< "${SCRIPT#"$BASE/"}"
+
+    for ((i=0; i<${#SCRIPT_COMPONENTS[@]}-1; i++)); do
+
+      if [ "${PREVIOUS_SCRIPT_COMPONENTS[i]}" == "${SCRIPT_COMPONENTS[i]}" ]; then
+        continue
+      fi
+
+      POSSIBLE_SCRIPT="$(printf "%s/" "${SCRIPT_COMPONENTS[@]:0:i+1}" )"
+      POSSIBLE_SCRIPT="${BASE}/${POSSIBLE_SCRIPT%/}.sh"
+
+      if _rs_in_array "$POSSIBLE_SCRIPT" "${ALREADY_PRINTED[@]}"; then
+        continue
+      fi
+      
+      if [ -f "$POSSIBLE_SCRIPT" ]; then
+        DESCRIPTION="$(
+          (source $POSSIBLE_SCRIPT && [ "$(type -t description)" == "function" ] && description) || echo "No description provided"
+        )"
+        SCRIPT_FILE="${SCRIPT_COMPONENTS[i]}"
+        printf "%$((i * INDENT_SIZE)).s%s - %s\n" ' ' "${SCRIPT_FILE%.sh}" "$DESCRIPTION"
+        ALREADY_PRINTED+=( "$POSSIBLE_SCRIPT" )
+        continue
+      fi
+
+      printf "%$((i * INDENT_SIZE)).s%s\n" ' ' "${SCRIPT_COMPONENTS[i]}"
+    done
+
+    if _rs_in_array "$SCRIPT" "${ALREADY_PRINTED[@]}"; then
+      PREVIOUS_SCRIPT_COMPONENTS=("${SCRIPT_COMPONENTS[@]}")
       continue
     fi
 
-    # non empty dir that doesn't share its name with a script
-    if [ -d "$dir_or_script" ] && [ ! -f "${dir_or_script}.sh" ] && [ "$(find "$dir_or_script" -mindepth 1 -maxdepth 1 -type d | wc -l)" -gt 0 ]; then
-      echo "$2$(basename "$dir_or_script")"
-      _rs_tree "$dir_or_script" "$2  "
-      continue
-    fi
+    DESCRIPTION="$(
+      (source $SCRIPT && [ "$(type -t description)" == "function" ] && description) || echo "No description provided"
+    )"
+    SCRIPT_FILE="${SCRIPT_COMPONENTS[i]}"
+    printf "%$((i * INDENT_SIZE)).s%s - %s\n" ' ' "${SCRIPT_FILE%.sh}" "$DESCRIPTION"
 
-    # dir that shares its name with a script
-    if [ -d "$dir_or_script" ] && [ -f "${dir_or_script}.sh" ]; then
-      DESCRIPTION="$(
-        (source ${dir_or_script}.sh && [ "$(type -t description)" == "function" ] && description) || echo "No description provided"
-      )"
-      SCRIPT_FILE="$(basename $dir_or_script)"
-      echo "$2${SCRIPT_FILE} - $DESCRIPTION"
-      _rs_tree "$dir_or_script" "$2  "
-      continue
-    fi
+    ALREADY_PRINTED+=( "$SCRIPT" )
+    PREVIOUS_SCRIPT_COMPONENTS=("${SCRIPT_COMPONENTS[@]}")
 
-    # script that doesn't share its name with a dir
-    if [ -f "$dir_or_script" ] && [ "${dir_or_script##*.}" == "sh" ] && [ ! -d "${dir_or_script%.sh}" ]; then
-      DESCRIPTION="$(
-        (source $dir_or_script && [ "$(type -t description)" == "function" ] && description) || echo "No description provided"
-      )"
-      SCRIPT_FILE="$(basename $dir_or_script)"
-      echo "$2${SCRIPT_FILE%.sh} - $DESCRIPTION"
-      continue
-    fi
-  done
+  done < <(find "$ROOT" -mindepth 1 -name '.*' -prune -or -name '*.sh' -type f )
 }
 
 if [ $# -eq 0 ]; then
@@ -155,7 +184,7 @@ if [ "$1" == "--list" ] || [ "$1" == "-l" ]; then
 fi
 
 if [ "$1" == "--tree" ] || [ "$1" == "-t" ]; then
-  _rs_tree "$( rs_cannonicalize "$RS_SCRIPTS_BASE_DIR/$( printf "%s/" "." "${@:2}" )" )" ""
+  _rs_tree "$@"
   exit $?
 fi
 
