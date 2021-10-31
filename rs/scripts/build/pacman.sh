@@ -3,11 +3,11 @@
 set -euo pipefail
 
 help() {
-  :
+  echo "$0 $@ - Build a pacman package"
 }
 
 description() {
-  echo "Build a pacman package"
+  echo "$0 $@ - Build a pacman package"
 }
 
 run() {
@@ -16,8 +16,8 @@ run() {
   mkdir -p "$BUILD_DIR"
 
   tar -czf "$BUILD_DIR/app.tar.gz" app
-  cp LICENSE "$BUILD_DIR"
-  sed "s/__VERSION__/$(cat ./VERSION)/g" package/pacman/PKGBUILD > "$BUILD_DIR/PKGBUILD"
+  cp LICENSE VERSION "$BUILD_DIR"
+  sed "s/__VERSION__/$(cat "$BUILD_DIR/VERSION")/g" package/pacman/PKGBUILD > "$BUILD_DIR/PKGBUILD"
 
   cd "$BUILD_DIR"
   

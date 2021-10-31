@@ -11,5 +11,16 @@ description() {
 }
 
 run() {
-  sudo pacman -U "$(find build/pacman/ -name '*.pkg.tar.xz')"
+  PACKAGE="$(source './package/pacman/PKGBUILD'; echo "build/pacman/rs-$(cat ./VERSION)-${pkgrel}-${arch}.pkg.tar.xz")"
+
+  if [ ! -f "$PACKAGE" ]; then
+    rs_error "Package \"$PACKAGE\" not found"
+    exit 1
+  fi
+
+  rs_info "Installing package \"$PACKAGE\""
+  
+  sudo pacman -U "$PACKAGE"
+  
+  rs_success "done"
 }

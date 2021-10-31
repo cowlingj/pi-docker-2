@@ -1,0 +1,1 @@
+\033[0;91m[Error]\033[0m: \033[1mThere are no scripts in /home/jonathan/Projects/pi-ansible/rs/test/test2/sub\033[0m

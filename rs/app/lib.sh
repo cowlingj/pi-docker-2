@@ -50,6 +50,11 @@ rs_help() {
   POSSIBLE_SPACE="" && [ $# -gt 1 ] && POSSIBLE_SPACE=" "
   echo "Get help for a particular script with \"$0 --help $@$POSSIBLE_SPACE<script>\""
   echo "Use \"$0 --list$POSSIBLE_SPACE$@\" to see a list of available scripts"
+  echo "Use \"$0 --tree\" to see a hierarchical list of available scripts"
+}
+
+rs_version() {
+  [ -f '/etc/rs/VERSION' ] && cat '/etc/rs/VERSION' || ( echo 'unknown' && exit 1 )
 }
 
 _rs_log_level() {

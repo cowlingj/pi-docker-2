@@ -8,7 +8,7 @@ rs – a build tool for running bash scripts
 
 # SYNOPSIS
 
-**rs** [**--help|-h**] [**--list|-l**] [**--tree|-t**] [*\<path\>* [*\<to\>* [*\<script\>*]]] [**--**] [*args ...*]
+**rs** [**--version|-v**] | [**--help|-h**] | [**--list|-l**] | [**--tree|-t**] [*\<path\>* [*\<to\>* [*\<script\>*]]] [**--**] [*args ...*]
 
 # DESCRIPTION
 
@@ -22,10 +22,13 @@ find out how someone before you solved one particular problem.
 :   Display a general message, or the help message for a script given by the supplied arguments.
 
 **-l**, **--list**
-:  Lists commands in the base script directory, or in a subdirectory specified by the arguments supplied (skips dotfiles).
+:   Lists commands in the base script directory, or in a subdirectory specified by the arguments supplied (skips dotfiles).
 
 **-t**, **--tree**
-: List commands recursively in the base script directory, or in a subdirectory specified by the arguments supplied (skips dotfiles).
+:   List commands recursively in the base script directory, or in a subdirectory specified by the arguments supplied (skips dotfiles).
+
+**-v**, **--version**
+:   Print out the current version
 
 # SCRIPT FILES
 

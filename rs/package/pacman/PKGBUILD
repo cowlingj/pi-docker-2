@@ -8,7 +8,7 @@ arch=("any")
 depends=("bash")
 makedepends=("pandoc")
 
-source=("./app.tar.gz" "LICENSE")
+source=("./app.tar.gz" "LICENSE" "VERSION")
 
 build() {
   cd "$srcdir/app"
@@ -21,5 +21,6 @@ package() {
   cp "$srcdir/app/rs.sh" "$pkgdir/usr/bin/rs"
   cp "$srcdir/app/lib.sh" "$pkgdir/usr/lib/rs"
   cp "$srcdir/app/rsrc" "$pkgdir/etc/rs/rsrc"
+  cp "$srcdir/VERSION" "$pkgdir/etc/rs/VERSION"
   cp "$srcdir/LICENSE" "$pkgdir/usr/share/licenses/rs"
 }
